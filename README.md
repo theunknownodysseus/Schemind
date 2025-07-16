@@ -6,7 +6,7 @@
 [![A-1.png](https://i.postimg.cc/mDhqxrdS/A-1.png)](https://postimg.cc/5YdpLfWH)
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Made with Next.js](https://img.shields.io/badge/built%20with-Next.js-black)](https://nextjs.org/)
+[![Made with Node.js](https://img.shields.io/badge/built%20with-Node.js-brightgreen)](https://nodejs.org/)
 [![Powered by Tailwind CSS](https://img.shields.io/badge/styled%20with-TailwindCSS-38bdf8)](https://tailwindcss.com/)
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://schemind.vercel.app/)
 
@@ -76,7 +76,7 @@ npm start
 ├── public/          # Static assets
 ├── src/
 │   ├── components/  # React components
-│   ├── pages/       # Next.js routes
+│   ├── pages/       # Typescript routes
 │   ├── styles/      # Tailwind + global CSS
 │   └── utils/       # Helpers, parsers, etc.
 ├── diagrams/        # Custom diagram renderers
@@ -159,14 +159,16 @@ See the [LICENSE](./LICENSE) file for details.
 
 Have questions or want to collaborate?
 
-📧 Email: [your-team@schemind.app](mailto:your-team@schemind.app)  
-🐦 Twitter: [@schemind_app](https://twitter.com/schemind_app)
+📧 Email:
+[Varun Kumar N](mailto:varunkumarn.23cse@kongu.edu)
+[Rohith O R](mailto:rohithor.23cse@kongu.edu)
+[Dharaneesh S S](mailto:dharaneeshss.23cse@kongu.edu)
 
 ---
 
 ## 🧠 Built With
 
-- [Next.js](https://nextjs.org/) – React framework
+- [Node.js](https://nodejs.org/) – Backend
 - [React](https://reactjs.org/) – UI library
 - [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS
 - [Mermaid](https://mermaid-js.github.io) / [PlantUML](https://plantuml.com/) – Diagrams
