@@ -580,10 +580,10 @@ const Roadmap: React.FC = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
+          Authorization: `Bearer 3W85slWByAIgHZnnkaFDRfMgUbGEpDp6XAbJqMkb`,
         },
         body: JSON.stringify({
-          model: "command",  // Using command model for faster response
+          model: "command-r-plus",  // Using command model for faster response
           prompt,
           max_tokens: 300,
           temperature: 0.7,
@@ -627,7 +627,7 @@ const Roadmap: React.FC = () => {
           'Authorization': 'Bearer 3W85slWByAIgHZnnkaFDRfMgUbGEpDp6XAbJqMkb'
         },
         body: JSON.stringify({
-          model: 'command',
+          model: 'command-r-plus',
           prompt: `Generate a list of 3-5 high-quality learning resources for ${topic}. Include:
 1. Official documentation
 2. Free online courses
@@ -931,7 +931,7 @@ Here are the resources for ${topic}:`,
           Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          model: "command",
+          model: "command-r-plus",
           prompt,
           max_tokens: 500,
           temperature: 0.8,

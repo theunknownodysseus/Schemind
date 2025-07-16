@@ -6,7 +6,7 @@ const Chatbot: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchResponse = async (message: string) => {
-    const apiKey = "UrAE5Hl6hFvaVseYaRMOZ7AJa2sxp62StdoTnwMc"; // Replace with actual key
+    const apiKey = "UrAE5Hl6hFvaVseYaRMOZ7AJa2sxp62StdoTnwMc"; 
     const endpoint = "https://api.cohere.ai/v1/generate";
 
     const prompt = User: ${message}\nAI(dont mention that it is a large language model built by the company Cohere, and I am designed to provide helpful, harmless responses to your queries.):;
