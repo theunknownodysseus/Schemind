@@ -129,12 +129,13 @@ Please read our `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md`.
 
 ## 📸 Screenshots
 
-> Replace with actual screenshots or GIFs
+[url=https://postimg.cc/LgsPZW5Y][img]https://i.postimg.cc/LgsPZW5Y/Screenshot-2025-07-17-021514.png[/img][/url]
 
-| Markdown Editor | Collaborative Canvas | Diagram Preview |
-|-----------------|----------------------|------------------|
-| ![Editor](https://via.placeholder.com/300x200.png?text=Markdown+Editor) | ![Canvas](https://via.placeholder.com/300x200.png?text=Canvas) | ![Diagram](https://via.placeholder.com/300x200.png?text=Diagram+Preview) |
+[url=https://postimg.cc/47PtyGfR][img]https://i.postimg.cc/47PtyGfR/Screenshot-2025-07-17-021526.png[/img][/url]
 
+[url=https://postimg.cc/k6qK7Gdy][img]https://i.postimg.cc/k6qK7Gdy/Screenshot-2025-07-17-021601.png[/img][/url]
+
+[url=https://postimg.cc/KKntXLCz][img]https://i.postimg.cc/KKntXLCz/Screenshot-2025-07-17-021628.png[/img][/url]
 ---
 
 ## 🔮 Roadmap
