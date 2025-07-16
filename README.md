@@ -1,116 +1,181 @@
-# Schemind
 
-**Schemind** is a powerful all-in-one markdown editor designed for engineering teams. It combines a markdown-based document editor, a collaborative canvas, and a diagram-as-code builder to streamline your workflow and documentation process.
+# 🧠 Schemind
+
+> **An all-in-one markdown editor, collaborative canvas, and diagram-as-code builder – built for engineering teams.**
+
+![Schemind Banner](https://via.placeholder.com/1200x300.png?text=Schemind+Markdown+Editor+%7C+Collaborative+Canvas+%7C+Diagrams)
+
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Made with Next.js](https://img.shields.io/badge/built%20with-Next.js-black)](https://nextjs.org/)
+[![Powered by Tailwind CSS](https://img.shields.io/badge/styled%20with-TailwindCSS-38bdf8)](https://tailwindcss.com/)
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://schemind.vercel.app/)
 
 ---
 
 ## 🚀 Features
 
-- **Markdown editor** with live preview
-- **Collaborative canvas** for brainstorming or freeform visual thinking
-- **Diagram-as-code** with real-time rendering, ideal for flowcharts, sequence diagrams, architecture diagrams, and more
-- **Team collaboration**: real-time editing and commenting
-- **User-friendly UI**: clean, modern interface with support for common markdown and diagram syntax
+✨ **Markdown Editor**  
+Write with full markdown support, live preview, and syntax highlighting.
+
+🧩 **Collaborative Canvas**  
+Freeform visual canvas for notes, mind maps, or brainstorming ideas.
+
+🧬 **Diagram-as-Code**  
+Supports Mermaid, PlantUML & other notations with real-time rendering.
+
+👥 **Team Collaboration**  
+Live editing, comments, cursors – collaborate effortlessly.
+
+🎨 **Modern UI**  
+Minimal, intuitive interface built with Tailwind CSS and React.
+
+---
+
+## 🌐 Live Demo
+
+👉 [Visit Schemind Online](https://schemind.vercel.app)
 
 ---
 
 ## 🛠️ Getting Started
 
-### Prerequisites
+### ⚙️ Prerequisites
 
-Make sure you have Node.js installed (v14+ recommended).
+- Node.js (v14 or later)
+- npm or yarn
 
-### Installation
+### 📦 Installation
 
+```bash
 git clone https://github.com/your-org/schemind.git
 cd schemind
 npm install
-Running in Development
+```
 
+### ▶️ Running in Development
+
+```bash
 npm run dev
-Open your browser at http://localhost:3000.
+```
 
-🏗️ Build for Production
+Visit: [http://localhost:3000](http://localhost:3000)
 
+### 🏗️ Build for Production
+
+```bash
 npm run build
 npm start
-Your app is now running in production mode at http://localhost:3000.
+```
 
-🚧 Project Structure
+---
 
+## 📁 Project Structure
+
+```
 /schemind
 ├── public/          # Static assets
 ├── src/
 │   ├── components/  # React components
-│   ├── pages/       # Pages (Next.js routing)
-│   ├── styles/      # CSS / Tailwind styles
-│   └── utils/       # Helper functions and diagram logic
-├── diagrams/        # Custom diagram renderer code/rules
+│   ├── pages/       # Next.js routes
+│   ├── styles/      # Tailwind + global CSS
+│   └── utils/       # Helpers, parsers, etc.
+├── diagrams/        # Custom diagram renderers
 ├── package.json
 └── README.md
-⚙️ Usage
-Markdown: Type your docs using standard markdown syntax. Live preview updates.
+```
 
-Canvas: Drag and drop components, add notes, wire up ideas visually.
+---
 
-Diagrams: Insert code blocks with diagram syntax (e.g., Mermaid, PlantUML), and view rendered diagrams inline.
+## ⚙️ Usage
 
-Use comments and live cursors to collaborate with your team in real time.
+📝 **Markdown**  
+Write using standard markdown, preview updates live.
 
-🤝 Contributing
+🧠 **Canvas**  
+Drag/drop components, draw connections, organize ideas.
+
+📊 **Diagrams**  
+Use code blocks like:
+
+\`\`\`mermaid
+graph TD
+    A[Start] --> B[Process]
+    B --> C[End]
+\`\`\`
+
+...and watch it render live.
+
+🫱 **Collaboration**  
+Use comments, shared cursors, and live sync for team editing.
+
+---
+
+## 🤝 Contributing
+
 We welcome contributions!
 
-Fork the repo
+1. Fork the repo
+2. Create a branch:  
+   `git checkout -b feature/awesome-feature`
+3. Make your changes & commit:  
+   `git commit -m "Added awesome feature"`
+4. Push to your branch:  
+   `git push origin feature/awesome-feature`
+5. Open a Pull Request
 
-Create a feature branch (git checkout -b feature/my-awesome-feature)
+Please read our `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md`.
 
-Commit your changes (git commit -m "Add my awesome feature")
+---
 
-Push to your branch (git push origin feature/my-awesome-feature)
+## 📸 Screenshots
 
-Open a Pull Request describing your changes
+> Replace with actual screenshots or GIFs
 
-Please follow our Code of Conduct and adhere to CONTRIBUTING.md guidelines.
+| Markdown Editor | Collaborative Canvas | Diagram Preview |
+|-----------------|----------------------|------------------|
+| ![Editor](https://via.placeholder.com/300x200.png?text=Markdown+Editor) | ![Canvas](https://via.placeholder.com/300x200.png?text=Canvas) | ![Diagram](https://via.placeholder.com/300x200.png?text=Diagram+Preview) |
 
-📄 License
-Schemind is licensed under the MIT License.
+---
 
-📧 Contact
-For questions or collaboration, reach out to us:
+## 🔮 Roadmap
 
-Email: your-team@schemind.app
+- [ ] User Authentication & Access Control
+- [ ] Document Versioning & History
+- [ ] Diagram Export (SVG, PNG)
+- [ ] Git / Slack / Jira integrations
+- [ ] Templates & AI Assistance
 
-Twitter: @schemind_app
+---
 
-🧠 Powered by
-Next.js – The React framework for production
+## 📄 License
 
-React – UI library
+Schemind is licensed under the **MIT License**.  
+See the [LICENSE](./LICENSE) file for details.
 
-Tailwind CSS – Utility-first CSS framework
+---
 
-Mermaid / PlantUML – Diagram rendering engines
+## 📬 Contact
 
-Socket.io – Real-time collaboration
+Have questions or want to collaborate?
 
-🔮 Future Roadmap
-User authentication and access control
+📧 Email: [your-team@schemind.app](mailto:your-team@schemind.app)  
+🐦 Twitter: [@schemind_app](https://twitter.com/schemind_app)
 
-Version history and document versioning
+---
 
-Diagram export (PNG/SVG)
+## 🧠 Built With
 
-Integrations with Git, Slack, Jira, etc.
+- [Next.js](https://nextjs.org/) – React framework
+- [React](https://reactjs.org/) – UI library
+- [Tailwind CSS](https://tailwindcss.com/) – Utility-first CSS
+- [Mermaid](https://mermaid-js.github.io) / [PlantUML](https://plantuml.com/) – Diagrams
+- [Socket.IO](https://socket.io/) – Real-time sync
 
-Tip: Once your README is ready, consider adding a quick “Getting Started” gif or screenshots to help users see the product in action.
+---
 
-Enjoy using Schemind? Star ⭐ the repo and spread the word!
+## 🌟 Like it?
 
+Star ⭐ the repo and share it with your team!  
+Contributions and feedback welcome 🤝
 
-### Notes:
-- Customize paths, contact info, and licensing to reflect your project specifics.
-- Adjust feature lists and dependencies if they differ.
-- Consider adding screenshots or GIFs for enhanced readability.
-
-Let me know if you'd like help adding images or other sections!
-::contentReference[oaicite:0]{index=0}
+---
