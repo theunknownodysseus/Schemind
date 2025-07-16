@@ -34,7 +34,7 @@ const Navigation: React.FC = () => {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <Link to="/" className="text-2xl font-bold text-white">
-                  GeethaTeaches
+                  Youniq
                 </Link>
               </div>
               <div className="hidden md:block">
@@ -122,7 +122,7 @@ const Navigation: React.FC = () => {
       {showChat && (
         <div className="fixed bottom-24 right-6 w-96 h-[600px] bg-gray-800 rounded-lg shadow-xl z-50 overflow-hidden">
           <div className="flex justify-between items-center p-4 border-b border-gray-700">
-            <h3 className="text-lg font-semibold text-white">Geetha</h3>
+            <h3 className="text-lg font-semibold text-white">Youniq</h3>
             <button
               onClick={() => setShowChat(false)}
               className="text-gray-400 hover:text-white transition-colors"
@@ -133,7 +133,7 @@ const Navigation: React.FC = () => {
           <div className="h-[calc(100%-4rem)] overflow-y-auto p-4">
             <div className="space-y-4">
               <div className="bg-gray-700 rounded-lg p-3 text-white">
-                Hello! I'm Geetha, your AI study assistant. How can I help you today?
+                Hello! I'm Pavi, your AI study assistant. How can I help you today?
               </div>
             </div>
           </div>

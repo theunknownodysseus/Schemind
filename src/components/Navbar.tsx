@@ -20,7 +20,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
             <GraduationCap className="h-8 w-8 text-blue-500" />
-            <span className="text-xl font-bold">GeethaTeaches</span>
+            <span className="text-xl font-bold">Youniq</span>
           </Link>
 
           {/* Desktop Navigation */}

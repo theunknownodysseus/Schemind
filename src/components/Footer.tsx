@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="col-span-1">
             <Link to="/" className="flex items-center space-x-2 mb-6">
               <GraduationCap className="h-8 w-8 text-blue-500" />
-              <span className="text-xl font-bold font-display">GeethaTeaches</span>
+              <span className="text-xl font-bold font-display">Youniq</span>
             </Link>
             <p className="text-gray-400 mb-6">
               Empowering students with AI-driven personalized learning experiences.
@@ -110,7 +110,7 @@ const Footer = () => {
 
         <div className="pt-8 border-t border-gray-800">
           <p className="text-center text-gray-400">
-            © {currentYear} GeethaTeaches. All rights reserved.
+            © {currentYear} Schemind's Youniq. All rights reserved.
           </p>
         </div>
       </div>

@@ -58,7 +58,7 @@ const ChatBot: React.FC = () => {
       id: Date.now().toString(),
       title: 'New Conversation',
       messages: [{
-        text: "Hi! I'm Geetha, your personal motivation coach. I can help you with:\n\n• Staying motivated in your studies\n• Overcoming learning challenges\n• Setting and achieving goals\n• Building study habits\n• Managing study stress\n\nWhat's on your mind today?",
+        text: "Hi! I'm Youniq, your personal motivation coach. I can help you with:\n\n• Staying motivated in your studies\n• Overcoming learning challenges\n• Setting and achieving goals\n• Building study habits\n• Managing study stress\n\nWhat's on your mind today?",
         isUser: false,
         timestamp: new Date()
       }],
@@ -118,7 +118,7 @@ const ChatBot: React.FC = () => {
       // Get the last 5 messages for context
       const recentMessages = updatedConversation.messages.slice(-5);
       const context = recentMessages.map(msg => 
-        `${msg.isUser ? 'User' : 'Geetha'}: ${msg.text}`
+        `${msg.isUser ? 'User' : 'Youniq'}: ${msg.text}`
       ).join('\n');
 
       const response = await fetch('https://api.cohere.ai/v1/generate', {
@@ -129,7 +129,7 @@ const ChatBot: React.FC = () => {
         },
         body: JSON.stringify({
           model: 'command',
-          prompt: `You are Geetha, a motivational coach focused on helping students achieve their learning goals. Your role is to:
+          prompt: `You are Youniq, a motivational coach focused on helping students achieve their learning goals. Your role is to:
 1. Provide encouragement and positive reinforcement
 2. Help students overcome learning challenges
 3. Share practical tips for study success

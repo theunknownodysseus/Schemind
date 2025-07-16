@@ -19,22 +19,22 @@ const Home = () => {
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
+      name: "Rohith",
       role: "Computer Science Student",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80",
-      quote: "GeethaTeaches transformed my learning experience. The AI-powered guidance helped me master complex topics efficiently."
+      image: "https://media.licdn.com/dms/image/v2/D5603AQG5EdS8OjfyQw/profile-displayphoto-shrink_400_400/B56ZVxQCRIHQAk-/0/1741361785314?e=1758153600&v=beta&t=UoVTXJlRpgZ2PvnrzfM0FHZoSgzYKhv5ZR9ZLHY8AfQ",
+      quote: "Youniq transformed my learning experience. The AI-powered guidance helped me master complex topics efficiently."
     },
     {
-      name: "Michael Chen",
-      role: "Engineering Major",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80",
+      name: "Varun",
+      role: "Computer Science Student",
+      image: "https://media.licdn.com/dms/image/v2/D5603AQEHVLujzZJVAg/profile-displayphoto-shrink_400_400/B56ZUaPTSIGsAg-/0/1739901974571?e=1758153600&v=beta&t=UftBMi1R1CmPo8hOLznJpPsYzK-YP3A2z5B3xTS-C3s",
       quote: "The personalized roadmaps and instant doubt resolution have been game-changers in my academic journey."
     },
     {
-      name: "Emily Rodriguez",
-      role: "Medical Student",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80",
-      quote: "Having Geetha as my AI tutor available 24/7 has significantly improved my study efficiency and understanding."
+      name: "Dharaneesh",
+      role: "Computer Science Student",
+      image: "https://media.licdn.com/dms/image/v2/D5603AQEE2ehHRI8r7g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1731778442654?e=1758153600&v=beta&t=IEj3KMlwCJ-FXviIzw2Re59AgbotDy94TgItGfDg19s",
+      quote: "Having Schemind's Youniq as my AI tutor available 24/7 has significantly improved my study efficiency and understanding."
     }
   ];
 
