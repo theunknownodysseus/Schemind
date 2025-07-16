@@ -76,39 +76,10 @@ npm start
 ├── public/          # Static assets
 ├── src/
 │   ├── components/  # React components
-│   ├── pages/       # Typescript routes
-│   ├── styles/      # Tailwind + global CSS
-│   └── utils/       # Helpers, parsers, etc.
-├── diagrams/        # Custom diagram renderers
+│   └── pages/       # Typescript routes
 ├── package.json
 └── README.md
 ```
-
----
-
-## ⚙️ Usage
-
-📝 **Markdown**  
-Write using standard markdown, preview updates live.
-
-🧠 **Canvas**  
-Drag/drop components, draw connections, organize ideas.
-
-📊 **Diagrams**  
-Use code blocks like:
-
-\`\`\`mermaid
-graph TD
-    A[Start] --> B[Process]
-    B --> C[End]
-\`\`\`
-
-...and watch it render live.
-
-🫱 **Collaboration**  
-Use comments, shared cursors, and live sync for team editing.
-
----
 
 ## 🤝 Contributing
 
@@ -143,7 +114,7 @@ Please read our `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md`.
 - [ ] User Authentication & Access Control
 - [ ] Document Versioning & History
 - [ ] Diagram Export (SVG, PNG)
-- [ ] Git / Slack / Jira integrations
+- [ ] Git integrations
 - [ ] Templates & AI Assistance
 
 ---
