@@ -126,16 +126,16 @@ We welcome contributions!
 Please read our `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md`.
 
 ---
-
 ## 📸 Screenshots
 
-[url=https://postimg.cc/LgsPZW5Y][img]https://i.postimg.cc/LgsPZW5Y/Screenshot-2025-07-17-021514.png[/img][/url]
+[![Screenshot 1](https://i.postimg.cc/LgsPZW5Y/Screenshot-2025-07-17-021514.png)](https://postimg.cc/LgsPZW5Y)
 
-[url=https://postimg.cc/47PtyGfR][img]https://i.postimg.cc/47PtyGfR/Screenshot-2025-07-17-021526.png[/img][/url]
+[![Screenshot 2](https://i.postimg.cc/47PtyGfR/Screenshot-2025-07-17-021526.png)](https://postimg.cc/47PtyGfR)
 
-[url=https://postimg.cc/k6qK7Gdy][img]https://i.postimg.cc/k6qK7Gdy/Screenshot-2025-07-17-021601.png[/img][/url]
+[![Screenshot 3](https://i.postimg.cc/k6qK7Gdy/Screenshot-2025-07-17-021601.png)](https://postimg.cc/k6qK7Gdy)
 
-[url=https://postimg.cc/KKntXLCz][img]https://i.postimg.cc/KKntXLCz/Screenshot-2025-07-17-021628.png[/img][/url]
+[![Screenshot 4](https://i.postimg.cc/KKntXLCz/Screenshot-2025-07-17-021628.png)](https://postimg.cc/KKntXLCz)
+
 ---
 
 ## 🔮 Roadmap
