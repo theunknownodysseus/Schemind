@@ -1,9 +1,9 @@
 
-# 🧠 Schemind
+# 🧠 Schemind's Youniq
 
 > **An all-in-one markdown editor, collaborative canvas, and diagram-as-code builder – built for engineering teams.**
 
-![Schemind Banner](https://via.placeholder.com/1200x300.png?text=Schemind+Markdown+Editor+%7C+Collaborative+Canvas+%7C+Diagrams)
+![Schemind Banner](https://postimg.cc/5YdpLfWH)
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Made with Next.js](https://img.shields.io/badge/built%20with-Next.js-black)](https://nextjs.org/)
