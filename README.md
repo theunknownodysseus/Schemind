@@ -1,5 +1,5 @@
 
-# 🧠 Schemind's Youniq
+# Schemind's Youniq
 
 > **An all-in-one markdown editor, collaborative canvas, and diagram-as-code builder – built for engineering teams.**
 
