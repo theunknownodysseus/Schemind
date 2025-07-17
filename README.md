@@ -27,7 +27,7 @@
 ### 📦 Installation
 
 ```bash
-git clone https://github.com/your-org/schemind.git
+git clone https://github.com/theunknownodysseus/Schemind.git
 cd schemind
 npm install
 ```
@@ -38,7 +38,7 @@ npm install
 npm run dev
 ```
 
-Visit: [http://localhost:3000](http://localhost:3000)
+Visit: [http://localhost:5172](http://localhost:5172)
 
 ### 🏗️ Build for Production
 
@@ -56,7 +56,7 @@ npm start
 ├── public/          # Static assets
 ├── src/
 │   ├── components/  # React components
-│   └── pages/       # Typescript routes
+│   └── pages/       # Typescript 
 ├── package.json
 └── README.md
 ```
