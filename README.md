@@ -10,26 +10,6 @@
 [![Powered by Tailwind CSS](https://img.shields.io/badge/styled%20with-TailwindCSS-38bdf8)](https://tailwindcss.com/)
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen.svg)](https://schemind.vercel.app/)
 
----
-
-## 🚀 Features
-
-✨ **Markdown Editor**  
-Write with full markdown support, live preview, and syntax highlighting.
-
-🧩 **Collaborative Canvas**  
-Freeform visual canvas for notes, mind maps, or brainstorming ideas.
-
-🧬 **Diagram-as-Code**  
-Supports Mermaid, PlantUML & other notations with real-time rendering.
-
-👥 **Team Collaboration**  
-Live editing, comments, cursors – collaborate effortlessly.
-
-🎨 **Modern UI**  
-Minimal, intuitive interface built with Tailwind CSS and React.
-
----
 
 ## 🌐 Live Demo
 
