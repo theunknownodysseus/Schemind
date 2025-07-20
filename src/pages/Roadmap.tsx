@@ -47,7 +47,7 @@ interface YouTubeVideo {
   };
 }
 
-const COHERE_API_KEY = 'RwRAzGaWIkiQJAV3Tapv1x5UlUgOwOgZNNs2Slfv';
+const COHERE_API_KEY = import.meta.env.VITE_COHERE_API_KEY;
 
 async function fetchRoadmap(topic: string, time: number, unit: string): Promise<string> {
   const prompt = `
@@ -564,7 +564,7 @@ const SubtreeModal: React.FC<SubtreeModalProps> = ({ isOpen, onClose, subtreeDat
 };
 
 async function fetchYouTubeVideos(query: string): Promise<YouTubeVideo[]> {
-  const API_KEY = 'AIzaSyAwnZQX4fzKPN0LVXhMGhcjO5SR1ha8EGs'; // Replace with your own key
+  const API_KEY = import.meta.env.VITE_API_KEY;
   const res = await fetch(
     `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=4&q=${encodeURIComponent(query + " tutorial")}&key=${API_KEY}`
   );

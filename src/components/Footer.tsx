@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { GraduationCap, Twitter, Linkedin, Github } from 'lucide-react';
+import { GraduationCap, Instagram, Linkedin, Github } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -19,13 +19,13 @@ const Footer = () => {
               Empowering students with AI-driven personalized learning experiences.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Twitter className="h-5 w-5" />
+              <a href="https://www.instagram.com/rohi__.26/" className="text-gray-400 hover:text-white transition-colors">
+                <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://www.linkedin.com/in/dharaneeshss/" className="text-gray-400 hover:text-white transition-colors">
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="https://github.com/theunknownodysseus/Schemind" className="text-gray-400 hover:text-white transition-colors">
                 <Github className="h-5 w-5" />
               </a>
             </div>
@@ -65,11 +65,6 @@ const Footer = () => {
               <li>
                 <a href="#" className="text-gray-400 hover:text-white transition-colors">
                   About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  Blog
                 </a>
               </li>
               <li>

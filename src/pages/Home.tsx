@@ -4,6 +4,7 @@ import { Brain, BookOpen, Trophy, Rocket, Users, Star, ChevronDown, Zap, Globe, 
 import { Link } from 'react-router-dom';
 import ChatBot from '../components/ChatBot';
 import { useChat } from '../context/ChatContext';
+import DotGrid from '../components/DotGrid';
 
 const Home = () => {
   const controls = useAnimation();
@@ -27,96 +28,102 @@ const Home = () => {
     {
       name: "Varun",
       role: "Computer Science Student",
-      image: "https://media.licdn.com/dms/image/v2/D5603AQEHVLujzZJVAg/profile-displayphoto-shrink_400_400/B56ZUaPTSIGsAg-/0/1739901974571?e=1758153600&v=beta&t=UftBMi1R1CmPo8hOLznJpPsYzK-YP3A2z5B3xTS-C3s",
+      image: "https://media.licdn.com/dms/image/v2/D5603AQHcrgGCbgYf8g/profile-displayphoto-scale_400_400/B56ZgiFy5.G4Ak-/0/1752918604057?e=1755734400&v=beta&t=6vbg_g-5159SC7twkAEIJ40Yy_AYvBU-BRFxGmhV3_4",
       quote: "The personalized roadmaps and instant doubt resolution have been game-changers in my academic journey."
     },
     {
       name: "Dharaneesh",
       role: "Computer Science Student",
-      image: "https://media.licdn.com/dms/image/v2/D5603AQEE2ehHRI8r7g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1731778442654?e=1758153600&v=beta&t=IEj3KMlwCJ-FXviIzw2Re59AgbotDy94TgItGfDg19s",
+      image: "https://media.licdn.com/dms/image/v2/D5603AQEWjvHQLvQXqQ/profile-displayphoto-scale_400_400/B56ZgjWoQgHkAk-/0/1752939805772?e=1755734400&v=beta&t=gRaV71-WqximIyDALOIlX7Wbhcbl4F7rdD0tK_4TSEk",
       quote: "Having Schemind's Youniq as my AI tutor available 24/7 has significantly improved my study efficiency and understanding."
     }
   ];
 
-  return (
-    <div className="relative">
-      {/* Hero Section */}
-      <section className="min-h-screen relative flex items-center justify-center overflow-hidden">
-        <motion.div 
-          className="absolute inset-0"
-          style={{ opacity, scale }}
+ return (
+  <div className="relative">
+    {/* Hero Section with DotGrid Background */}
+    
+    <section className="min-h-screen relative flex items-center justify-center overflow-hidden">
+      {/* DotGrid Background - fills entire section */}
+      
+<div style={{ width: '100%', height: '100%', position: 'absolute'}}>
+  <DotGrid
+    dotSize={4}
+    gap={15}
+    baseColor="#6759a2ff"
+    activeColor="#5227FF"
+    proximity={120}
+    shockRadius={250}
+    shockStrength={5}
+    resistance={750}
+    returnDuration={1.5}
+  />
+</div>
+      
+      {/* Content - positioned above DotGrid */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500"
         >
-          <img
-            src="https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80"
-            alt="Study background"
-            className="w-full h-full object-cover opacity-20"
-          />
-        </motion.div>
+          Your AI-Powered
+          <br />
+          Study Companion
+        </motion.h1>
         
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-5xl md:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500"
-          >
-            Your AI-Powered
-            <br />
-            Study Companion
-          </motion.h1>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto"
-          >
-            Personalized learning paths, instant doubt resolution, and career guidance
-            powered by advanced AI technology.
-          </motion.p>
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto"
+        >
+          Personalized learning paths, instant doubt resolution, and career guidance
+          powered by advanced AI technology.
+        </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-wrap justify-center gap-4"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="flex flex-wrap justify-center gap-4"
+        >
+          <Link
+            to="/roadmap"
+            className="px-8 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors text-lg font-semibold flex items-center justify-center gap-2"
           >
-            <Link
-              to="/roadmap"
-              className="px-8 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors text-lg font-semibold flex items-center justify-center gap-2"
-            >
-              Get Started
-              <ArrowRight size={20} />
-            </Link>
-            <button
-              onClick={openChat}
-              className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-full hover:bg-white/10 transition-colors text-lg font-semibold flex items-center justify-center gap-2"
-            >
-              <MessageCircle size={20} />
-              Try AI Chat
-            </button>
-          </motion.div>
+            Get Started
+            <ArrowRight size={20} />
+          </Link>
+          <button
+            onClick={openChat}
+            className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-full hover:bg-white/10 transition-colors text-lg font-semibold flex items-center justify-center gap-2"
+          >
+            <MessageCircle size={20} />
+            Try AI Chat
+          </button>
+        </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2 }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          >
-            <ChevronDown className="w-8 h-8 animate-bounce" />
-          </motion.div>
-        </div>
-      </section>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        >
+          <ChevronDown className="w-8 h-8 animate-bounce" />
+        </motion.div>
+      </div>
+    </section>
 
       {/* Stats Section */}
       <section className="py-20 bg-black/80 backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
             {[
-              { number: "50K+", label: "Active Students", icon: Users },
+              { number: "100+ Students", label: "Active Students", icon: Users },
               { number: "95%", label: "Success Rate", icon: Trophy },
-              { number: "24/7", label: "AI Support", icon: Zap },
-              { number: "150+", label: "Countries", icon: Globe }
+              { number: "24/7", label: "AI Support", icon: Zap }
             ].map((stat, index) => (
               <motion.div
                 key={index}
