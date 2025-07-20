@@ -9,6 +9,8 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { resourceStore } from './Resources';
+import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
+import { jsPDF } from 'jspdf';
 
 interface RoadmapProps {}
 
@@ -719,6 +721,38 @@ const Roadmap: React.FC<RoadmapProps> = () => {
     setNestedSelectedNode(null);
     setNestedNodeDetails('');
   };
+  const downloadPng = async () => {
+    const flowElement = document.querySelector('.react-flow');
+    if (!flowElement) return;
+
+    try {
+      const dataUrl = await toPng(flowElement as HTMLElement);
+      const link = document.createElement('a');
+      link.download = `${topic}-roadmap.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      console.error('Error downloading PNG:', error);
+    }
+  };
+
+  const downloadPdf = async () => {
+    const flowElement = document.querySelector('.react-flow');
+    if (!flowElement) return;
+
+    try {
+      const dataUrl = await toPng(flowElement as HTMLElement);
+      const pdf = new jsPDF('landscape');
+      const imgProps = pdf.getImageProperties(dataUrl);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      
+      pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`${topic}-roadmap.pdf`);
+    } catch (error) {
+      console.error('Error downloading PDF:', error);
+    }
+  };
 
   return (
     <div className="p-6 bg-gray-900 text-white min-h-screen">
@@ -758,6 +792,22 @@ const Roadmap: React.FC<RoadmapProps> = () => {
         >
           {loading ? 'Loading...' : 'Generate'}
         </button>
+        {nodes.length > 0 && (
+          <>
+            <button 
+              onClick={downloadPng}
+              className="p-2 bg-green-600 rounded min-w-[100px] hover:bg-green-700 transition-colors"
+            >
+              Download PNG
+            </button>
+            <button 
+              onClick={downloadPdf}
+              className="p-2 bg-red-600 rounded min-w-[100px] hover:bg-red-700 transition-colors"
+            >
+              Download PDF
+            </button>
+          </>
+        )}
       </div>
 
       <div className="flex" style={{ height: 'calc(100vh - 200px)' }}>
