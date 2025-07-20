@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Youtube, FileText } from 'lucide-react';
-import { subscribeToResourceUpdates, getGlobalResources, ResourceNavigation } from './Roadmap';
 import { useLocation } from 'react-router-dom';
 
 export type Resource = {
@@ -11,8 +10,42 @@ export type Resource = {
   link: string;
 };
 
+// Create a simple resource management system
+export const resourceStore = {
+  resources: [] as Resource[],
+  listeners: new Set<Function>(),
+
+  getResources(): Resource[] {
+    return this.resources;
+  },
+
+  addResource(resource: Resource) {
+    this.resources = [...this.resources, resource];
+    this.notifyListeners();
+  },
+
+  subscribe(callback: (resources: Resource[]) => void): () => void {
+    this.listeners.add(callback);
+    return () => this.listeners.delete(callback);
+  },
+
+  notifyListeners() {
+    for (const listener of this.listeners) {
+      listener(this.resources);
+    }
+  }
+};
+// Export functions that will be used by Roadmap component
+export const subscribeToResourceUpdates = resourceStore.subscribe.bind(resourceStore);
+export const getGlobalResources = resourceStore.getResources.bind(resourceStore);
+
+export type ResourceNavigation = {
+  resourceId?: string;
+  scrollToResource?: boolean;
+};
+
 const Resources: React.FC = () => {
-  const [resources, setResources] = useState<Resource[]>(getGlobalResources());
+  const [resources, setResources] = useState<Resource[]>(resourceStore.getResources());
   const location = useLocation();
   const resourceRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
