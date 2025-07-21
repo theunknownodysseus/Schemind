@@ -18,6 +18,7 @@ const Navbar = () => {
     <nav className="fixed w-full z-50 bg-black/50 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
+          <img src="logo.png" alt="Youniq Logo" className="h-8 w-8 hidden md:block" />
           <Link to="/" className="flex items-center space-x-2">
             <GraduationCap className="h-8 w-8 text-blue-500" />
             <span className="text-xl font-bold">Youniq</span>
