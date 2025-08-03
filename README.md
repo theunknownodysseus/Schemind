@@ -3,7 +3,7 @@
 
 > **An all-in-one markdown editor, collaborative canvas, and diagram-as-code builder – built for engineering teams.**
 
-[![A-1.png](https://i.postimg.cc/mDhqxrdS/A-1.png)](https://postimg.cc/5YdpLfWH)
+[![A-1.png](https://i.postimg.cc/WzS3qqKc/SCHEMIND-S.png)](https://postimg.cc/5YdpLfWH)
 
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Made with Node.js](https://img.shields.io/badge/built%20with-Node.js-brightgreen)](https://nodejs.org/)
