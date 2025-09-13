@@ -1,7 +1,7 @@
 
 # Schemind's Youniq
 
-> **An all-in-one markdown editor, collaborative canvas, and diagram-as-code builder – built for engineering teams.**
+> **An all-in-one ai virtual mentor – built for students.**
 
 [![A-1.png](https://i.postimg.cc/WzS3qqKc/SCHEMIND-S.png)](https://postimg.cc/5YdpLfWH)
 
