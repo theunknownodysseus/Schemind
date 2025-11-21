@@ -7,37 +7,43 @@ const Chatbot: React.FC = () => {
 
   const fetchResponse = async (message: string) => {
     const apiKey = "UrAE5Hl6hFvaVseYaRMOZ7AJa2sxp62StdoTnwMc"; 
-    const endpoint = "https://api.cohere.ai/v1/generate";
-
-    const prompt = User: ${message}\nAI(dont mention that it is a large language model built by the company Cohere, and I am designed to provide helpful, harmless responses to your queries.):;
+    const endpoint = "https://api.cohere.ai/v1/chat";
 
     try {
       setLoading(true);
+
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: Bearer ${apiKey},
+          Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
           model: "command-r-plus",
-          prompt,
-          max_tokens: 150,
+          messages: [
+            { role: "user", content: message }
+          ],
           temperature: 0.7,
-          top_p: 1.0,
-          stop_sequences: ["\n"],
         }),
       });
 
       if (!response.ok) {
-        throw new Error(HTTP error! Status: ${response.status});
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
       const data = await response.json();
       setLoading(false);
 
-      const aiResponse = data?.generations?.[0]?.text.trim() || "Sorry, I couldn't understand.";
-      setMessages((prev) => [...prev, User: ${message}, AI: ${aiResponse}]);
+      const aiResponse =
+        data?.message?.content?.[0]?.text?.trim() ||
+        "Sorry, I couldn't understand.";
+
+      setMessages((prev) => [
+        ...prev,
+        `User: ${message}`,
+        `AI: ${aiResponse}`,
+      ]);
+
     } catch (error) {
       setLoading(false);
       console.error("Error fetching response:", error);
@@ -54,7 +60,14 @@ const Chatbot: React.FC = () => {
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
       <h2>Chatbot</h2>
-      <div style={{ height: "300px", overflowY: "scroll", border: "1px solid black", padding: "10px" }}>
+      <div
+        style={{
+          height: "300px",
+          overflowY: "scroll",
+          border: "1px solid black",
+          padding: "10px",
+        }}
+      >
         {messages.map((msg, index) => (
           <p key={index}>{msg}</p>
         ))}
