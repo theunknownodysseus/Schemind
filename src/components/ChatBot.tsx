@@ -3,6 +3,9 @@ import { MessageCircle, Send, X, Loader, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '../context/ChatContext';
 
+// 👉 NEW IMPORT (SDK)
+import { GoogleGenAI } from "@google/genai";
+
 type Message = {
   text: string;
   isUser: boolean;
@@ -25,6 +28,11 @@ const ChatBot: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showQuickPrompts, setShowQuickPrompts] = useState(true);
+
+  // 👉 Initialize Gemini SDK
+  const ai = new GoogleGenAI({
+    apiKey: "AIzaSyDeC13eXS3igAB5MQZGWArKlQdgz6WROps"
+  });
 
   // Load conversations
   useEffect(() => {
@@ -135,18 +143,10 @@ What's on your mind today?`,
         .map(m => `${m.isUser ? "User" : "Youniq"}: ${m.text}`)
         .join("\n");
 
-      // --- GEMINI v1 API CALL (Official Google format) ---
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=AIzaSyDeC13eXS3igAB5MQZGWArKlQdgz6WROps`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  {
-                    text: `You are Youniq, a motivational coach helping students succeed.
+      // 👉 GEMINI SDK CALL (replacing fetch)
+      const result = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: `You are Youniq, a motivational coach helping students succeed.
 
 Your role:
 1. Provide encouragement and positivity
@@ -168,20 +168,9 @@ ${context}
 User: ${userMessage.text}
 
 Give a supportive motivational response:`
-                  }
-                ]
-              }
-            ]
-          })
-        }
-      );
+      });
 
-      const json = await response.json();
-
-      // Extract response safely
-      const botText =
-        json?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "I'm sorry, I couldn't understand that.";
+      const botText = result?.response?.text() || "I'm sorry, I couldn't understand that.";
 
       const finalConv: Conversation = {
         ...updated,
