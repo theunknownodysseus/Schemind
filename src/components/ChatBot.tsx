@@ -170,9 +170,33 @@ Give a supportive motivational response:`
 
       const json = await geminiRes.json();
 
-      const botResponse =
-        json.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "I'm sorry, I couldn't understand that.";
+     // SAFELY extract Gemini text (handles multiple formats)
+let botResponse = "";
+
+// Try unified parts array
+const parts = json?.candidates?.[0]?.content?.parts;
+if (Array.isArray(parts)) {
+  botResponse = parts
+    .map((p: any) => p?.text || "")
+    .join(" ")
+    .trim();
+}
+
+// Try "text" field inside "content"
+if (!botResponse) {
+  const content = json?.candidates?.[0]?.content;
+  if (typeof content === "string") botResponse = content;
+}
+
+// Try "output_text"
+if (!botResponse) {
+  botResponse = json?.candidates?.[0]?.output_text || "";
+}
+
+// Final fallback
+if (!botResponse || botResponse.trim() === "") {
+  botResponse = "I'm sorry, I couldn't understand that.";
+}
 
       // Add bot message
       const finalConv: Conversation = {
