@@ -3,8 +3,8 @@ import { MessageCircle, Send, X, Loader, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '../context/ChatContext';
 
-// NEW: Import Cohere SDK
-import Cohere from 'cohere-ai';
+// Import CohereClient from latest cohere-ai package
+import { CohereClient } from 'cohere-ai';
 
 type Message = {
   text: string;
@@ -29,10 +29,12 @@ const ChatBot: React.FC = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showQuickPrompts, setShowQuickPrompts] = useState(true);
 
-  // Initialize Cohere with your hardcoded API key
-  Cohere.init('gxhSGDmTyUrlspLk8RCRJ6RfUXksbNDPdqeZK4s9');
+  // Initialize CohereClient with your API key
+  const cohere = new CohereClient({
+    apiKey: 'gxhSGDmTyUrlspLk8RCRJ6RfUXksbNDPdqeZK4s9',
+  });
 
-  // Load conversations
+  // Load conversations from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('chatConversations');
     if (saved) {
@@ -40,19 +42,19 @@ const ChatBot: React.FC = () => {
         ...c,
         messages: c.messages.map((m: any) => ({
           ...m,
-          timestamp: new Date(m.timestamp)
-        }))
+          timestamp: new Date(m.timestamp),
+        })),
       }));
       setConversations(parsed);
     }
   }, []);
 
-  // Save conversations
+  // Save conversations to localStorage
   useEffect(() => {
     localStorage.setItem('chatConversations', JSON.stringify(conversations));
   }, [conversations]);
 
-  // Create first conversation when opened
+  // Create new conversation when chat is opened and none selected
   useEffect(() => {
     if (isChatOpen && !currentConversation) {
       createNewConversation();
@@ -62,7 +64,7 @@ const ChatBot: React.FC = () => {
   const createNewConversation = () => {
     const starter: Conversation = {
       id: Date.now().toString(),
-      title: "New Conversation",
+      title: 'New Conversation',
       messages: [
         {
           text: `Hi! I'm Youniq, your personal motivation coach. I can help you with:
@@ -75,19 +77,18 @@ const ChatBot: React.FC = () => {
 
 What's on your mind today?`,
           isUser: false,
-          timestamp: new Date()
-        }
+          timestamp: new Date(),
+        },
       ],
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
-
-    setConversations(prev => [starter, ...prev]);
+    setConversations((prev) => [starter, ...prev]);
     setCurrentConversation(starter);
     setShowHistory(false);
   };
 
   const deleteConversation = (id: string) => {
-    setConversations(prev => prev.filter(c => c.id !== id));
+    setConversations((prev) => prev.filter((c) => c.id !== id));
     if (currentConversation?.id === id) setCurrentConversation(null);
   };
 
@@ -98,13 +99,13 @@ What's on your mind today?`,
 
   const quickPrompts = [
     "I'm feeling overwhelmed with my studies",
-    "How can I stay motivated?",
+    'How can I stay motivated?',
     "I'm struggling with procrastination",
-    "Can you help me set study goals?",
-    "How do I manage study stress?",
-    "Tips for better study habits",
+    'Can you help me set study goals?',
+    'How do I manage study stress?',
+    'Tips for better study habits',
     "I'm afraid of failing",
-    "How to balance studies and life?"
+    'How to balance studies and life?',
   ];
 
   const handleQuickPrompt = (prompt: string) => {
@@ -125,24 +126,23 @@ What's on your mind today?`,
     const updated: Conversation = {
       ...currentConversation,
       messages: [...currentConversation.messages, userMessage],
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
 
     setCurrentConversation(updated);
-    setConversations(prev => prev.map(c => c.id === updated.id ? updated : c));
+    setConversations((prev) => prev.map((c) => (c.id === updated.id ? updated : c)));
 
     setInputMessage('');
     setIsLoading(true);
 
     try {
-      // Build messages history as array for Cohere chat API
-      // Limit to last 10 messages to keep context manageable
-      const recentMessages = updated.messages.slice(-10).map(m => ({
+      // Prepare messages for Cohere chat API: last 10 messages as context
+      const recentMessages = updated.messages.slice(-10).map((m) => ({
         role: m.isUser ? 'user' : 'assistant',
-        content: m.text
+        content: m.text,
       }));
 
-      // Add system message with instructions (like prompt)
+      // Add system message with instructions for personality and behavior
       const systemMessage = {
         role: 'system',
         content: `You are Youniq, a motivational coach helping students succeed.
@@ -159,19 +159,18 @@ Style:
 - Solution-oriented
 - Inspiring and uplifting
 - Practical and actionable
-- Personal and relatable`
+- Personal and relatable`,
       };
 
-      // Prepare chat messages including system context + conversation history
       const chatMessages = [systemMessage, ...recentMessages];
 
-      // Cohere chat API call
-      const response = await Cohere.chat.chat({
+      // Call Cohere chat completion
+      const response = await cohere.chat.completions.create({
         model: 'command-nightly',
-        messages: chatMessages
+        messages: chatMessages,
       });
 
-      const botText = response.choices?.[0]?.message?.content || "I'm sorry, I couldn't understand that.";
+      const botText = response.choices?.[0]?.message?.content ?? "I'm sorry, I couldn't understand that.";
 
       const finalConv: Conversation = {
         ...updated,
@@ -181,20 +180,17 @@ Style:
             text: botText,
             isUser: false,
             timestamp: new Date(),
-          }
+          },
         ],
         lastUpdated: new Date(),
         title:
-          updated.messages.length === 1
-            ? userMessage.text.slice(0, 30) + "..."
-            : updated.title
+          updated.messages.length === 1 ? userMessage.text.slice(0, 30) + '...' : updated.title,
       };
 
       setCurrentConversation(finalConv);
-      setConversations(prev => prev.map(c => c.id === finalConv.id ? finalConv : c));
-
+      setConversations((prev) => prev.map((c) => (c.id === finalConv.id ? finalConv : c)));
     } catch (err) {
-      console.error("Cohere Error:", err);
+      console.error('Cohere Error:', err);
 
       const errConv: Conversation = {
         ...currentConversation,
@@ -203,14 +199,13 @@ Style:
           {
             text: "I'm having trouble responding. Try again soon.",
             isUser: false,
-            timestamp: new Date()
-          }
-        ]
+            timestamp: new Date(),
+          },
+        ],
       };
 
       setCurrentConversation(errConv);
-      setConversations(prev => prev.map(c => c.id === errConv.id ? errConv : c));
-
+      setConversations((prev) => prev.map((c) => (c.id === errConv.id ? errConv : c)));
     } finally {
       setIsLoading(false);
     }
@@ -246,9 +241,7 @@ Style:
                   <MessageCircle size={20} />
                 </button>
                 <h3 className="text-lg font-semibold text-white">
-                  {showHistory
-                    ? "Question History"
-                    : currentConversation?.title || "New Conversation"}
+                  {showHistory ? 'Question History' : currentConversation?.title || 'New Conversation'}
                 </h3>
               </div>
               <button
@@ -262,7 +255,6 @@ Style:
             {/* Content */}
             <div className="flex-1 overflow-hidden">
               {showHistory ? (
-                // History
                 <div className="h-full overflow-y-auto p-4">
                   <button
                     onClick={createNewConversation}
@@ -272,7 +264,7 @@ Style:
                   </button>
 
                   <div className="space-y-2">
-                    {conversations.map(conv => (
+                    {conversations.map((conv) => (
                       <div
                         key={conv.id}
                         className="flex items-center justify-between p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
@@ -294,21 +286,16 @@ Style:
                   </div>
                 </div>
               ) : (
-                // Chat Screen
                 <div className="h-full flex flex-col">
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {currentConversation?.messages.map((msg, i) => (
                       <div
                         key={i}
-                        className={`flex ${
-                          msg.isUser ? 'justify-end' : 'justify-start'
-                        }`}
+                        className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}
                       >
                         <div
                           className={`max-w-[80%] rounded-lg p-3 ${
-                            msg.isUser
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-800 text-gray-100'
+                            msg.isUser ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-100'
                           }`}
                         >
                           <p className="text-sm whitespace-pre-line">{msg.text}</p>
@@ -355,8 +342,8 @@ Style:
                       <input
                         type="text"
                         value={inputMessage}
-                        onChange={e => setInputMessage(e.target.value)}
-                        onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
+                        onChange={(e) => setInputMessage(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                         placeholder="Ask your question..."
                         className="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
