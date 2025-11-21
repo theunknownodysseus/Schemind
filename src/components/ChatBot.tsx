@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Send, X, Loader, Trash2, BookOpen, Brain, HelpCircle } from 'lucide-react';
+import { MessageCircle, Send, X, Loader, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '../context/ChatContext';
 
@@ -26,27 +26,27 @@ const ChatBot: React.FC = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showQuickPrompts, setShowQuickPrompts] = useState(true);
 
-  // Load conversations from localStorage on component mount
+  // Load conversations on mount
   useEffect(() => {
     const savedConversations = localStorage.getItem('chatConversations');
     if (savedConversations) {
-      const parsedConversations = JSON.parse(savedConversations).map((conv: any) => ({
+      const parsed = JSON.parse(savedConversations).map((conv: any) => ({
         ...conv,
         messages: conv.messages.map((msg: any) => ({
           ...msg,
           timestamp: new Date(msg.timestamp)
         }))
       }));
-      setConversations(parsedConversations);
+      setConversations(parsed);
     }
   }, []);
 
-  // Save conversations to localStorage whenever they change
+  // Save conversations
   useEffect(() => {
     localStorage.setItem('chatConversations', JSON.stringify(conversations));
   }, [conversations]);
 
-  // Create new conversation when chat is opened
+  // Create conversation on open
   useEffect(() => {
     if (isChatOpen && !currentConversation) {
       createNewConversation();
@@ -54,137 +54,167 @@ const ChatBot: React.FC = () => {
   }, [isChatOpen]);
 
   const createNewConversation = () => {
-    const newConversation: Conversation = {
+    const newConv: Conversation = {
       id: Date.now().toString(),
       title: 'New Conversation',
-      messages: [{
-        text: "Hi! I'm Youniq, your personal motivation coach. I can help you with:\n\n• Staying motivated in your studies\n• Overcoming learning challenges\n• Setting and achieving goals\n• Building study habits\n• Managing study stress\n\nWhat's on your mind today?",
-        isUser: false,
-        timestamp: new Date()
-      }],
+      messages: [
+        {
+          text: `Hi! I'm Youniq, your personal motivation coach. I can help you with:
+
+• Staying motivated in your studies
+• Overcoming learning challenges
+• Setting and achieving goals
+• Building study habits
+• Managing study stress
+
+What's on your mind today?`,
+          isUser: false,
+          timestamp: new Date()
+        }
+      ],
       lastUpdated: new Date()
     };
-    setConversations(prev => [newConversation, ...prev]);
-    setCurrentConversation(newConversation);
+
+    setConversations(prev => [newConv, ...prev]);
+    setCurrentConversation(newConv);
     setShowHistory(false);
   };
 
   const deleteConversation = (id: string) => {
-    setConversations(prev => prev.filter(conv => conv.id !== id));
-    if (currentConversation?.id === id) {
-      setCurrentConversation(null);
-    }
+    setConversations(prev => prev.filter(c => c.id !== id));
+    if (currentConversation?.id === id) setCurrentConversation(null);
   };
 
-  const switchConversation = (conversation: Conversation) => {
-    setCurrentConversation(conversation);
+  const switchConversation = (conv: Conversation) => {
+    setCurrentConversation(conv);
     setShowHistory(false);
   };
 
   const handleQuickPrompt = (prompt: string) => {
     setInputMessage(prompt);
     setShowQuickPrompts(false);
-    // Send the message immediately
-    setTimeout(() => {
-      handleSendMessage();
-    }, 100);
+    setTimeout(handleSendMessage, 100);
   };
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || !currentConversation) return;
 
-    const userMessage = {
+    const userMessage: Message = {
       text: inputMessage,
       isUser: true,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    // Update current conversation
-    const updatedConversation = {
+    // Add user message
+    const updatedConv: Conversation = {
       ...currentConversation,
       messages: [...currentConversation.messages, userMessage],
       lastUpdated: new Date()
     };
-    setCurrentConversation(updatedConversation);
-    setConversations(prev => 
-      prev.map(conv => 
-        conv.id === currentConversation.id ? updatedConversation : conv
-      )
+
+    setCurrentConversation(updatedConv);
+    setConversations(prev =>
+      prev.map(c => (c.id === updatedConv.id ? updatedConv : c))
     );
+
     setInputMessage('');
     setIsLoading(true);
 
     try {
-      // Get the last 5 messages for context
-      const recentMessages = updatedConversation.messages.slice(-5);
-      const context = recentMessages.map(msg => 
-        `${msg.isUser ? 'User' : 'Youniq'}: ${msg.text}`
-      ).join('\n');
+      // Use last 5 msgs as context
+      const recent = updatedConv.messages.slice(-5);
+      const context = recent
+        .map(m => `${m.isUser ? 'User' : 'Youniq'}: ${m.text}`)
+        .join('\n');
 
-      const response = await fetch('https://api.cohere.ai/v1/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer 3W85slWByAIgHZnnkaFDRfMgUbGEpDp6XAbJqMkb'
-        },
-        body: JSON.stringify({
-          model: 'command',
-          prompt: `You are Youniq, a motivational coach focused on helping students achieve their learning goals. Your role is to:
-1. Provide encouragement and positive reinforcement
+      // -------- GEMINI API CALL --------
+      const geminiRes = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyDeC13eXS3igAB5MQZGWArKlQdgz6WROps",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: `You are Youniq, a motivational coach helping students succeed.
+
+Your role:
+1. Provide encouragement and positivity
 2. Help students overcome learning challenges
-3. Share practical tips for study success
-4. Offer emotional support during difficult times
-5. Guide students in setting and achieving goals
+3. Give practical study tips
+4. Support them emotionally
+5. Guide them in setting goals
 
-Your communication style should be:
+Style:
 - Warm and empathetic
 - Solution-oriented
 - Inspiring and uplifting
 - Practical and actionable
 - Personal and relatable
 
-Here's the conversation context:\n\n${context}\n\nUser: ${inputMessage}\n\nProvide a supportive, motivational response:`,
-          max_tokens: 300,
-          temperature: 0.8,
-        })
-      });
+Conversation context:
+${context}
 
-      const data = await response.json();
-      const botResponse = data.generations[0].text.trim();
+User: ${userMessage.text}
 
-      // Update conversation with bot response
-      const finalConversation = {
-        ...updatedConversation,
-        messages: [...updatedConversation.messages, {
-          text: botResponse,
-          isUser: false,
-          timestamp: new Date()
-        }],
-        lastUpdated: new Date(),
-        title: updatedConversation.messages.length === 1 ? inputMessage.slice(0, 30) + '...' : updatedConversation.title
-      };
-      setCurrentConversation(finalConversation);
-      setConversations(prev => 
-        prev.map(conv => 
-          conv.id === currentConversation.id ? finalConversation : conv
-        )
+Give a supportive motivational response:`
+                  }
+                ]
+              }
+            ]
+          })
+        }
       );
-    } catch (error) {
-      console.error('Error getting bot response:', error);
-      const errorConversation = {
-        ...updatedConversation,
-        messages: [...updatedConversation.messages, {
-          text: "I'm sorry, I'm having trouble responding right now. Please try again.",
-          isUser: false,
-          timestamp: new Date()
-        }],
+
+      const json = await geminiRes.json();
+
+      const botResponse =
+        json.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "I'm sorry, I couldn't understand that.";
+
+      // Add bot message
+      const finalConv: Conversation = {
+        ...updatedConv,
+        messages: [
+          ...updatedConv.messages,
+          {
+            text: botResponse,
+            isUser: false,
+            timestamp: new Date()
+          }
+        ],
+        lastUpdated: new Date(),
+        title:
+          updatedConv.messages.length === 1
+            ? userMessage.text.slice(0, 30) + "..."
+            : updatedConv.title
+      };
+
+      setCurrentConversation(finalConv);
+      setConversations(prev =>
+        prev.map(c => (c.id === finalConv.id ? finalConv : c))
+      );
+    } catch (err) {
+      console.error("Gemini error:", err);
+
+      const errorConv: Conversation = {
+        ...updatedConv,
+        messages: [
+          ...updatedConv.messages,
+          {
+            text: "I'm having trouble responding. Try again soon.",
+            isUser: false,
+            timestamp: new Date()
+          }
+        ],
         lastUpdated: new Date()
       };
-      setCurrentConversation(errorConversation);
-      setConversations(prev => 
-        prev.map(conv => 
-          conv.id === currentConversation.id ? errorConversation : conv
-        )
+
+      setCurrentConversation(errorConv);
+      setConversations(prev =>
+        prev.map(c => (c.id === errorConv.id ? errorConv : c))
       );
     } finally {
       setIsLoading(false);
@@ -206,7 +236,7 @@ Here's the conversation context:\n\n${context}\n\nUser: ${inputMessage}\n\nProvi
     <>
       {/* Chat Button */}
       <button
-        onClick={() => isChatOpen ? closeChat() : createNewConversation()}
+        onClick={() => (isChatOpen ? closeChat() : createNewConversation())}
         className="fixed bottom-6 right-6 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors z-50"
       >
         <MessageCircle size={24} />
@@ -216,10 +246,10 @@ Here's the conversation context:\n\n${context}\n\nUser: ${inputMessage}\n\nProvi
       <AnimatePresence>
         {isChatOpen && (
           <motion.div
-            initial={{ x: '100%', opacity: 0 }}
+            initial={{ x: "100%", opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: '100%', opacity: 0 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            exit={{ x: "100%", opacity: 0 }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="fixed right-0 top-0 h-full w-96 bg-gray-900 shadow-xl z-50 flex flex-col"
           >
             {/* Header */}
@@ -232,7 +262,9 @@ Here's the conversation context:\n\n${context}\n\nUser: ${inputMessage}\n\nProvi
                   <MessageCircle size={20} />
                 </button>
                 <h3 className="text-lg font-semibold text-white">
-                  {showHistory ? 'Question History' : currentConversation?.title || 'New Conversation'}
+                  {showHistory
+                    ? "Question History"
+                    : currentConversation?.title || "New Conversation"}
                 </h3>
               </div>
               <button
@@ -246,7 +278,7 @@ Here's the conversation context:\n\n${context}\n\nUser: ${inputMessage}\n\nProvi
             {/* Content */}
             <div className="flex-1 overflow-hidden">
               {showHistory ? (
-                // Conversation History
+                // History
                 <div className="h-full overflow-y-auto p-4">
                   <button
                     onClick={createNewConversation}
@@ -254,6 +286,7 @@ Here's the conversation context:\n\n${context}\n\nUser: ${inputMessage}\n\nProvi
                   >
                     New Conversation
                   </button>
+
                   <div className="space-y-2">
                     {conversations.map(conv => (
                       <div
@@ -277,31 +310,36 @@ Here's the conversation context:\n\n${context}\n\nUser: ${inputMessage}\n\nProvi
                   </div>
                 </div>
               ) : (
-                // Current Conversation
+                // Chat
                 <div className="h-full flex flex-col">
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                    {currentConversation?.messages.map((message, index) => (
+                    {currentConversation?.messages.map((msg, i) => (
                       <div
-                        key={index}
-                        className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+                        key={i}
+                        className={`flex ${
+                          msg.isUser ? "justify-end" : "justify-start"
+                        }`}
                       >
                         <div
                           className={`max-w-[80%] rounded-lg p-3 ${
-                            message.isUser
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-800 text-gray-100'
+                            msg.isUser
+                              ? "bg-blue-600 text-white"
+                              : "bg-gray-800 text-gray-100"
                           }`}
                         >
-                          <p className="text-sm whitespace-pre-line">{message.text}</p>
+                          <p className="text-sm whitespace-pre-line">
+                            {msg.text}
+                          </p>
                           <span className="text-xs opacity-50 mt-1 block">
-                            {message.timestamp.toLocaleTimeString([], { 
-                              hour: '2-digit', 
-                              minute: '2-digit' 
+                            {msg.timestamp.toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
                             })}
                           </span>
                         </div>
                       </div>
                     ))}
+
                     {isLoading && (
                       <div className="flex justify-start">
                         <div className="bg-gray-800 text-gray-100 rounded-lg p-3">
@@ -310,29 +348,36 @@ Here's the conversation context:\n\n${context}\n\nUser: ${inputMessage}\n\nProvi
                       </div>
                     )}
                   </div>
-                  {showQuickPrompts && currentConversation?.messages.length === 1 && (
-                    <div className="p-4 bg-gray-800 border-t border-gray-700">
-                      <h4 className="text-sm text-gray-400 mb-2">Quick Questions:</h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        {quickPrompts.map((prompt, index) => (
-                          <button
-                            key={index}
-                            onClick={() => handleQuickPrompt(prompt)}
-                            className="text-sm text-gray-300 bg-gray-700 p-2 rounded hover:bg-gray-600 transition-colors text-left"
-                          >
-                            {prompt}
-                          </button>
-                        ))}
+
+                  {showQuickPrompts &&
+                    currentConversation?.messages.length === 1 && (
+                      <div className="p-4 bg-gray-800 border-t border-gray-700">
+                        <h4 className="text-sm text-gray-400 mb-2">
+                          Quick Questions:
+                        </h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          {quickPrompts.map((p, i) => (
+                            <button
+                              key={i}
+                              onClick={() => handleQuickPrompt(p)}
+                              className="text-sm text-gray-300 bg-gray-700 p-2 rounded hover:bg-gray-600 transition-colors text-left"
+                            >
+                              {p}
+                            </button>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+
                   <div className="p-4 bg-gray-800">
                     <div className="flex gap-2">
                       <input
                         type="text"
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                        onKeyPress={(e) =>
+                          e.key === "Enter" && handleSendMessage()
+                        }
                         placeholder="Ask your question..."
                         className="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
@@ -355,4 +400,4 @@ Here's the conversation context:\n\n${context}\n\nUser: ${inputMessage}\n\nProvi
   );
 };
 
-export default ChatBot; 
+export default ChatBot;
