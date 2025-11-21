@@ -3,9 +3,6 @@ import { MessageCircle, Send, X, Loader, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '../context/ChatContext';
 
-// Updated: Import CohereClient
-import { CohereClient } from 'cohere-ai';
-
 type Message = {
   text: string;
   isUser: boolean;
@@ -20,6 +17,9 @@ type Conversation = {
   topic?: string;
 };
 
+// WARNING: NEVER expose secret keys in production!
+const COHERE_API_KEY = 'gxhSGDmTyUrlspLk8RCRJ6RfUXksbNDPdqeZK4s9';
+
 const ChatBot: React.FC = () => {
   const { isChatOpen, closeChat } = useChat();
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -29,12 +29,7 @@ const ChatBot: React.FC = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showQuickPrompts, setShowQuickPrompts] = useState(true);
 
-  // Initialize CohereClient with your API key
-  const cohere = new CohereClient({
-    apiKey: 'gxhSGDmTyUrlspLk8RCRJ6RfUXksbNDPdqeZK4s9',
-  });
-
-  // Load conversations
+  // Load conversations from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('chatConversations');
     if (saved) {
@@ -49,12 +44,12 @@ const ChatBot: React.FC = () => {
     }
   }, []);
 
-  // Save conversations
+  // Save conversations to localStorage
   useEffect(() => {
     localStorage.setItem('chatConversations', JSON.stringify(conversations));
   }, [conversations]);
 
-  // Create a new conversation when chat opens and none selected
+  // Create first conversation when opened
   useEffect(() => {
     if (isChatOpen && !currentConversation) {
       createNewConversation();
@@ -136,7 +131,7 @@ What's on your mind today?`,
     setIsLoading(true);
 
     try {
-      // Build text prompt with last 5 messages for context
+      // Build prompt from last 5 messages
       const recent = updated.messages
         .slice(-5)
         .map((m) => `${m.isUser ? 'User' : 'Youniq'}: ${m.text}`)
@@ -150,18 +145,28 @@ ${recent}
 
 Youniq:`;
 
-      // Use generate for text generation with prompt
-      const response = await cohere.generate({
-        model: 'command-xlarge-nightly',
-        prompt,
-        max_tokens: 250,
-        temperature: 0.7,
-        k: 0,
-        p: 1,
-        stop_sequences: ['User:', 'Youniq:'],
+      // Make HTTPS request directly to Cohere API
+      const response = await fetch('https://api.cohere.ai/generate', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${COHERE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'command-xlarge-nightly',
+          prompt,
+          max_tokens: 250,
+          temperature: 0.7,
+          k: 0,
+          p: 1,
+          stop_sequences: ['User:', 'Youniq:'],
+        }),
       });
 
-      const botText = response.generations[0].text.trim();
+      const result = await response.json();
+      const botText =
+        result.generations?.[0]?.text?.trim() ||
+        "I'm having trouble responding. Try again soon.";
 
       const finalConv: Conversation = {
         ...updated,
