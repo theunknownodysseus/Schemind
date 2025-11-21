@@ -3,7 +3,7 @@ import { MessageCircle, Send, X, Loader, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '../context/ChatContext';
 
-// Import CohereClient from latest cohere-ai package
+// Updated: Import CohereClient
 import { CohereClient } from 'cohere-ai';
 
 type Message = {
@@ -34,7 +34,7 @@ const ChatBot: React.FC = () => {
     apiKey: 'gxhSGDmTyUrlspLk8RCRJ6RfUXksbNDPdqeZK4s9',
   });
 
-  // Load conversations from localStorage
+  // Load conversations
   useEffect(() => {
     const saved = localStorage.getItem('chatConversations');
     if (saved) {
@@ -49,12 +49,12 @@ const ChatBot: React.FC = () => {
     }
   }, []);
 
-  // Save conversations to localStorage
+  // Save conversations
   useEffect(() => {
     localStorage.setItem('chatConversations', JSON.stringify(conversations));
   }, [conversations]);
 
-  // Create new conversation when chat is opened and none selected
+  // Create a new conversation when chat opens and none selected
   useEffect(() => {
     if (isChatOpen && !currentConversation) {
       createNewConversation();
@@ -136,41 +136,32 @@ What's on your mind today?`,
     setIsLoading(true);
 
     try {
-      // Prepare messages for Cohere chat API: last 10 messages as context
-      const recentMessages = updated.messages.slice(-10).map((m) => ({
-        role: m.isUser ? 'user' : 'assistant',
-        content: m.text,
-      }));
+      // Build text prompt with last 5 messages for context
+      const recent = updated.messages
+        .slice(-5)
+        .map((m) => `${m.isUser ? 'User' : 'Youniq'}: ${m.text}`)
+        .join('\n');
 
-      // Add system message with instructions for personality and behavior
-      const systemMessage = {
-        role: 'system',
-        content: `You are Youniq, a motivational coach helping students succeed.
+      const prompt = `You are Youniq, a motivational coach helping students succeed.
+Your responses should be warm, empathetic, and solution-oriented.
 
-Your role:
-1. Provide encouragement and positivity
-2. Help students overcome learning challenges
-3. Give practical study tips
-4. Support them emotionally
-5. Guide them in setting goals
+Conversation:
+${recent}
 
-Style:
-- Warm and empathetic
-- Solution-oriented
-- Inspiring and uplifting
-- Practical and actionable
-- Personal and relatable`,
-      };
+Youniq:`;
 
-      const chatMessages = [systemMessage, ...recentMessages];
-
-      // Call Cohere chat completion
-      const response = await cohere.chat.completions.create({
-        model: 'command-nightly',
-        messages: chatMessages,
+      // Use generate for text generation with prompt
+      const response = await cohere.generate({
+        model: 'command-xlarge-nightly',
+        prompt,
+        max_tokens: 250,
+        temperature: 0.7,
+        k: 0,
+        p: 1,
+        stop_sequences: ['User:', 'Youniq:'],
       });
 
-      const botText = response.choices?.[0]?.message?.content ?? "I'm sorry, I couldn't understand that.";
+      const botText = response.generations[0].text.trim();
 
       const finalConv: Conversation = {
         ...updated,
@@ -184,7 +175,9 @@ Style:
         ],
         lastUpdated: new Date(),
         title:
-          updated.messages.length === 1 ? userMessage.text.slice(0, 30) + '...' : updated.title,
+          updated.messages.length === 1
+            ? userMessage.text.slice(0, 30) + '...'
+            : updated.title,
       };
 
       setCurrentConversation(finalConv);
