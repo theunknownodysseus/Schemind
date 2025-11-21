@@ -49,7 +49,7 @@ interface YouTubeVideo {
   };
 }
 
-const COHERE_API_KEY = import.meta.env.VITE_COHERE_API_KEY;
+const COHERE_API_KEY = 'gxhSGDmTyUrlspLk8RCRJ6RfUXksbNDPdqeZK4s9';
 
 async function fetchRoadmap(topic: string, time: number, unit: string): Promise<string> {
   const prompt = `
