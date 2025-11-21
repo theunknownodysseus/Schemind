@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import * as GoogleAI from "@google/generative-ai";
 
 const Chatbot: React.FC = () => {
   const [messages, setMessages] = useState<string[]>([]);
@@ -7,52 +8,33 @@ const Chatbot: React.FC = () => {
 
   const fetchResponse = async (message: string) => {
     const apiKey = 'AIzaSyDeC13eXS3igAB5MQZGWArKlQdgz6WROps';
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
 
-    const payload = {
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: message }],
-        },
-      ],
-    };
+    const genAI = new GoogleAI.GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     try {
       setLoading(true);
 
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setLoading(false);
-
-      const aiResponse =
-        data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
-        "Sorry, I couldn't understand.";
+      const result = await model.generateContent(message);
+      const responseText =
+        result.response.text().trim() || "Sorry, I couldn't understand.";
 
       setMessages((prev) => [
         ...prev,
         `User: ${message}`,
-        `AI: ${aiResponse}`,
+        `AI: ${responseText}`,
       ]);
-    } catch (error) {
-      console.error("Error fetching response:", error);
-      setLoading(false);
-      setMessages((prev) => [...prev, "Error fetching response. Check API key."]);
+    } catch (err) {
+      console.error(err);
+      setMessages((prev) => [...prev, "Error fetching response."]);
     }
+
+    setLoading(false);
   };
 
-  const handleSend = async () => {
-    if (input.trim() === "") return;
-    await fetchResponse(input);
+  const handleSend = () => {
+    if (!input.trim()) return;
+    fetchResponse(input);
     setInput("");
   };
 
@@ -68,8 +50,8 @@ const Chatbot: React.FC = () => {
           padding: "10px",
         }}
       >
-        {messages.map((msg, index) => (
-          <p key={index}>{msg}</p>
+        {messages.map((msg, i) => (
+          <p key={i}>{msg}</p>
         ))}
       </div>
 
