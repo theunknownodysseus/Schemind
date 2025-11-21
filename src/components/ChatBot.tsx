@@ -3,8 +3,8 @@ import { MessageCircle, Send, X, Loader, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '../context/ChatContext';
 
-// 👉 NEW IMPORT (SDK)
-import { GoogleGenAI } from "@google/genai";
+// NEW: Import Cohere SDK
+import Cohere from 'cohere-ai';
 
 type Message = {
   text: string;
@@ -29,10 +29,8 @@ const ChatBot: React.FC = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showQuickPrompts, setShowQuickPrompts] = useState(true);
 
-  // 👉 Initialize Gemini SDK
-  const ai = new GoogleGenAI({
-    apiKey: "AIzaSyDeC13eXS3igAB5MQZGWArKlQdgz6WROps"
-  });
+  // Initialize Cohere with your hardcoded API key
+  Cohere.init('gxhSGDmTyUrlspLk8RCRJ6RfUXksbNDPdqeZK4s9');
 
   // Load conversations
   useEffect(() => {
@@ -137,16 +135,17 @@ What's on your mind today?`,
     setIsLoading(true);
 
     try {
-      // Build context (last 5 messages)
-      const recent = updated.messages.slice(-5);
-      const context = recent
-        .map(m => `${m.isUser ? "User" : "Youniq"}: ${m.text}`)
-        .join("\n");
+      // Build messages history as array for Cohere chat API
+      // Limit to last 10 messages to keep context manageable
+      const recentMessages = updated.messages.slice(-10).map(m => ({
+        role: m.isUser ? 'user' : 'assistant',
+        content: m.text
+      }));
 
-      // 👉 GEMINI SDK CALL (replacing fetch)
-      const result = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: `You are Youniq, a motivational coach helping students succeed.
+      // Add system message with instructions (like prompt)
+      const systemMessage = {
+        role: 'system',
+        content: `You are Youniq, a motivational coach helping students succeed.
 
 Your role:
 1. Provide encouragement and positivity
@@ -160,17 +159,19 @@ Style:
 - Solution-oriented
 - Inspiring and uplifting
 - Practical and actionable
-- Personal and relatable
+- Personal and relatable`
+      };
 
-Conversation context:
-${context}
+      // Prepare chat messages including system context + conversation history
+      const chatMessages = [systemMessage, ...recentMessages];
 
-User: ${userMessage.text}
-
-Give a supportive motivational response:`
+      // Cohere chat API call
+      const response = await Cohere.chat.chat({
+        model: 'command-nightly',
+        messages: chatMessages
       });
 
-      const botText = result?.response?.text() || "I'm sorry, I couldn't understand that.";
+      const botText = response.choices?.[0]?.message?.content || "I'm sorry, I couldn't understand that.";
 
       const finalConv: Conversation = {
         ...updated,
@@ -193,7 +194,7 @@ Give a supportive motivational response:`
       setConversations(prev => prev.map(c => c.id === finalConv.id ? finalConv : c));
 
     } catch (err) {
-      console.error("Gemini Error:", err);
+      console.error("Cohere Error:", err);
 
       const errConv: Conversation = {
         ...currentConversation,
@@ -229,10 +230,10 @@ Give a supportive motivational response:`
       <AnimatePresence>
         {isChatOpen && (
           <motion.div
-            initial={{ x: "100%", opacity: 0 }}
+            initial={{ x: '100%', opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: "100%", opacity: 0 }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            exit={{ x: '100%', opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed right-0 top-0 h-full w-96 bg-gray-900 shadow-xl z-50 flex flex-col"
           >
             {/* Header */}
@@ -300,21 +301,21 @@ Give a supportive motivational response:`
                       <div
                         key={i}
                         className={`flex ${
-                          msg.isUser ? "justify-end" : "justify-start"
+                          msg.isUser ? 'justify-end' : 'justify-start'
                         }`}
                       >
                         <div
                           className={`max-w-[80%] rounded-lg p-3 ${
                             msg.isUser
-                              ? "bg-blue-600 text-white"
-                              : "bg-gray-800 text-gray-100"
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-800 text-gray-100'
                           }`}
                         >
                           <p className="text-sm whitespace-pre-line">{msg.text}</p>
                           <span className="text-xs opacity-50 mt-1 block">
                             {msg.timestamp.toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
+                              hour: '2-digit',
+                              minute: '2-digit',
                             })}
                           </span>
                         </div>
@@ -331,25 +332,22 @@ Give a supportive motivational response:`
                   </div>
 
                   {/* Quick Prompts */}
-                  {showQuickPrompts &&
-                    currentConversation?.messages.length === 1 && (
-                      <div className="p-4 bg-gray-800 border-t border-gray-700">
-                        <h4 className="text-sm text-gray-400 mb-2">
-                          Quick Questions:
-                        </h4>
-                        <div className="grid grid-cols-2 gap-2">
-                          {quickPrompts.map((p, i) => (
-                            <button
-                              key={i}
-                              onClick={() => handleQuickPrompt(p)}
-                              className="text-sm text-gray-300 bg-gray-700 p-2 rounded hover:bg-gray-600 transition-colors text-left"
-                            >
-                              {p}
-                            </button>
-                          ))}
-                        </div>
+                  {showQuickPrompts && currentConversation?.messages.length === 1 && (
+                    <div className="p-4 bg-gray-800 border-t border-gray-700">
+                      <h4 className="text-sm text-gray-400 mb-2">Quick Questions:</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        {quickPrompts.map((p, i) => (
+                          <button
+                            key={i}
+                            onClick={() => handleQuickPrompt(p)}
+                            className="text-sm text-gray-300 bg-gray-700 p-2 rounded hover:bg-gray-600 transition-colors text-left"
+                          >
+                            {p}
+                          </button>
+                        ))}
                       </div>
-                    )}
+                    </div>
+                  )}
 
                   {/* Input Area */}
                   <div className="p-4 bg-gray-800">
@@ -357,10 +355,8 @@ Give a supportive motivational response:`
                       <input
                         type="text"
                         value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                        onKeyPress={(e) =>
-                          e.key === "Enter" && handleSendMessage()
-                        }
+                        onChange={e => setInputMessage(e.target.value)}
+                        onKeyPress={e => e.key === 'Enter' && handleSendMessage()}
                         placeholder="Ask your question..."
                         className="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
