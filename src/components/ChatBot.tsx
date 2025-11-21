@@ -26,15 +26,15 @@ const ChatBot: React.FC = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showQuickPrompts, setShowQuickPrompts] = useState(true);
 
-  // Load conversations on mount
+  // Load conversations
   useEffect(() => {
-    const savedConversations = localStorage.getItem('chatConversations');
-    if (savedConversations) {
-      const parsed = JSON.parse(savedConversations).map((conv: any) => ({
-        ...conv,
-        messages: conv.messages.map((msg: any) => ({
-          ...msg,
-          timestamp: new Date(msg.timestamp)
+    const saved = localStorage.getItem('chatConversations');
+    if (saved) {
+      const parsed = JSON.parse(saved).map((c: any) => ({
+        ...c,
+        messages: c.messages.map((m: any) => ({
+          ...m,
+          timestamp: new Date(m.timestamp)
         }))
       }));
       setConversations(parsed);
@@ -46,7 +46,7 @@ const ChatBot: React.FC = () => {
     localStorage.setItem('chatConversations', JSON.stringify(conversations));
   }, [conversations]);
 
-  // Create conversation on open
+  // Create first conversation when opened
   useEffect(() => {
     if (isChatOpen && !currentConversation) {
       createNewConversation();
@@ -54,9 +54,9 @@ const ChatBot: React.FC = () => {
   }, [isChatOpen]);
 
   const createNewConversation = () => {
-    const newConv: Conversation = {
+    const starter: Conversation = {
       id: Date.now().toString(),
-      title: 'New Conversation',
+      title: "New Conversation",
       messages: [
         {
           text: `Hi! I'm Youniq, your personal motivation coach. I can help you with:
@@ -75,8 +75,8 @@ What's on your mind today?`,
       lastUpdated: new Date()
     };
 
-    setConversations(prev => [newConv, ...prev]);
-    setCurrentConversation(newConv);
+    setConversations(prev => [starter, ...prev]);
+    setCurrentConversation(starter);
     setShowHistory(false);
   };
 
@@ -89,6 +89,17 @@ What's on your mind today?`,
     setCurrentConversation(conv);
     setShowHistory(false);
   };
+
+  const quickPrompts = [
+    "I'm feeling overwhelmed with my studies",
+    "How can I stay motivated?",
+    "I'm struggling with procrastination",
+    "Can you help me set study goals?",
+    "How do I manage study stress?",
+    "Tips for better study habits",
+    "I'm afraid of failing",
+    "How to balance studies and life?"
+  ];
 
   const handleQuickPrompt = (prompt: string) => {
     setInputMessage(prompt);
@@ -105,31 +116,28 @@ What's on your mind today?`,
       timestamp: new Date(),
     };
 
-    // Add user message
-    const updatedConv: Conversation = {
+    const updated: Conversation = {
       ...currentConversation,
       messages: [...currentConversation.messages, userMessage],
       lastUpdated: new Date()
     };
 
-    setCurrentConversation(updatedConv);
-    setConversations(prev =>
-      prev.map(c => (c.id === updatedConv.id ? updatedConv : c))
-    );
+    setCurrentConversation(updated);
+    setConversations(prev => prev.map(c => c.id === updated.id ? updated : c));
 
     setInputMessage('');
     setIsLoading(true);
 
     try {
-      // Use last 5 msgs as context
-      const recent = updatedConv.messages.slice(-5);
+      // Build context (last 5 messages)
+      const recent = updated.messages.slice(-5);
       const context = recent
-        .map(m => `${m.isUser ? 'User' : 'Youniq'}: ${m.text}`)
-        .join('\n');
+        .map(m => `${m.isUser ? "User" : "Youniq"}: ${m.text}`)
+        .join("\n");
 
-      // -------- GEMINI API CALL --------
-      const geminiRes = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyDeC13eXS3igAB5MQZGWArKlQdgz6WROps",
+      // --- GEMINI v1 API CALL (Official Google format) ---
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=AIzaSyDeC13eXS3igAB5MQZGWArKlQdgz6WROps`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -168,93 +176,55 @@ Give a supportive motivational response:`
         }
       );
 
-      const json = await geminiRes.json();
+      const json = await response.json();
 
-     // SAFELY extract Gemini text (handles multiple formats)
-let botResponse = "";
+      // Extract response safely
+      const botText =
+        json?.candidates?.[0]?.content?.parts?.[0]?.text ||
+        "I'm sorry, I couldn't understand that.";
 
-// Try unified parts array
-const parts = json?.candidates?.[0]?.content?.parts;
-if (Array.isArray(parts)) {
-  botResponse = parts
-    .map((p: any) => p?.text || "")
-    .join(" ")
-    .trim();
-}
-
-// Try "text" field inside "content"
-if (!botResponse) {
-  const content = json?.candidates?.[0]?.content;
-  if (typeof content === "string") botResponse = content;
-}
-
-// Try "output_text"
-if (!botResponse) {
-  botResponse = json?.candidates?.[0]?.output_text || "";
-}
-
-// Final fallback
-if (!botResponse || botResponse.trim() === "") {
-  botResponse = "I'm sorry, I couldn't understand that.";
-}
-
-      // Add bot message
       const finalConv: Conversation = {
-        ...updatedConv,
+        ...updated,
         messages: [
-          ...updatedConv.messages,
+          ...updated.messages,
           {
-            text: botResponse,
+            text: botText,
             isUser: false,
-            timestamp: new Date()
+            timestamp: new Date(),
           }
         ],
         lastUpdated: new Date(),
         title:
-          updatedConv.messages.length === 1
+          updated.messages.length === 1
             ? userMessage.text.slice(0, 30) + "..."
-            : updatedConv.title
+            : updated.title
       };
 
       setCurrentConversation(finalConv);
-      setConversations(prev =>
-        prev.map(c => (c.id === finalConv.id ? finalConv : c))
-      );
-    } catch (err) {
-      console.error("Gemini error:", err);
+      setConversations(prev => prev.map(c => c.id === finalConv.id ? finalConv : c));
 
-      const errorConv: Conversation = {
-        ...updatedConv,
+    } catch (err) {
+      console.error("Gemini Error:", err);
+
+      const errConv: Conversation = {
+        ...currentConversation,
         messages: [
-          ...updatedConv.messages,
+          ...currentConversation.messages,
           {
             text: "I'm having trouble responding. Try again soon.",
             isUser: false,
             timestamp: new Date()
           }
-        ],
-        lastUpdated: new Date()
+        ]
       };
 
-      setCurrentConversation(errorConv);
-      setConversations(prev =>
-        prev.map(c => (c.id === errorConv.id ? errorConv : c))
-      );
+      setCurrentConversation(errConv);
+      setConversations(prev => prev.map(c => c.id === errConv.id ? errConv : c));
+
     } finally {
       setIsLoading(false);
     }
   };
-
-  const quickPrompts = [
-    "I'm feeling overwhelmed with my studies",
-    "How can I stay motivated?",
-    "I'm struggling with procrastination",
-    "Can you help me set study goals?",
-    "How do I manage study stress?",
-    "Tips for better study habits",
-    "I'm afraid of failing",
-    "How to balance studies and life?"
-  ];
 
   return (
     <>
@@ -334,7 +304,7 @@ if (!botResponse || botResponse.trim() === "") {
                   </div>
                 </div>
               ) : (
-                // Chat
+                // Chat Screen
                 <div className="h-full flex flex-col">
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {currentConversation?.messages.map((msg, i) => (
@@ -351,9 +321,7 @@ if (!botResponse || botResponse.trim() === "") {
                               : "bg-gray-800 text-gray-100"
                           }`}
                         >
-                          <p className="text-sm whitespace-pre-line">
-                            {msg.text}
-                          </p>
+                          <p className="text-sm whitespace-pre-line">{msg.text}</p>
                           <span className="text-xs opacity-50 mt-1 block">
                             {msg.timestamp.toLocaleTimeString([], {
                               hour: "2-digit",
@@ -373,6 +341,7 @@ if (!botResponse || botResponse.trim() === "") {
                     )}
                   </div>
 
+                  {/* Quick Prompts */}
                   {showQuickPrompts &&
                     currentConversation?.messages.length === 1 && (
                       <div className="p-4 bg-gray-800 border-t border-gray-700">
@@ -393,6 +362,7 @@ if (!botResponse || botResponse.trim() === "") {
                       </div>
                     )}
 
+                  {/* Input Area */}
                   <div className="p-4 bg-gray-800">
                     <div className="flex gap-2">
                       <input
