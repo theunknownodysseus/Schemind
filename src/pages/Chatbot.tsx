@@ -6,25 +6,25 @@ const Chatbot: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const fetchResponse = async (message: string) => {
-    const apiKey = "UrAE5Hl6hFvaVseYaRMOZ7AJa2sxp62StdoTnwMc"; 
-    const endpoint = "https://api.cohere.ai/v1/chat";
+    const apiKey = 'AIzaSyDeC13eXS3igAB5MQZGWArKlQdgz6WROps';
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+
+    const payload = {
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: message }],
+        },
+      ],
+    };
 
     try {
       setLoading(true);
 
       const response = await fetch(endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          model: "command-r-plus",
-          messages: [
-            { role: "user", content: message }
-          ],
-          temperature: 0.7,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -35,7 +35,7 @@ const Chatbot: React.FC = () => {
       setLoading(false);
 
       const aiResponse =
-        data?.message?.content?.[0]?.text?.trim() ||
+        data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ||
         "Sorry, I couldn't understand.";
 
       setMessages((prev) => [
@@ -43,10 +43,9 @@ const Chatbot: React.FC = () => {
         `User: ${message}`,
         `AI: ${aiResponse}`,
       ]);
-
     } catch (error) {
-      setLoading(false);
       console.error("Error fetching response:", error);
+      setLoading(false);
       setMessages((prev) => [...prev, "Error fetching response. Check API key."]);
     }
   };
@@ -60,6 +59,7 @@ const Chatbot: React.FC = () => {
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
       <h2>Chatbot</h2>
+
       <div
         style={{
           height: "300px",
@@ -72,13 +72,18 @@ const Chatbot: React.FC = () => {
           <p key={index}>{msg}</p>
         ))}
       </div>
+
       <input
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
         style={{ width: "80%", padding: "10px", marginTop: "10px" }}
       />
-      <button onClick={handleSend} style={{ padding: "10px", marginLeft: "10px" }}>
+
+      <button
+        onClick={handleSend}
+        style={{ padding: "10px", marginLeft: "10px" }}
+      >
         {loading ? "Loading..." : "Send"}
       </button>
     </div>
